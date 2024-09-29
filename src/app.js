@@ -1,6 +1,22 @@
 const express=require("express");
 const app=express();
 
+
+app.get("/user",
+    (req,res,next)=>{
+        console.log("Route 1 called");
+        res.send("HII");
+        next();
+    },
+    (req,res,next)=>{
+        console.log("Route 2 called");
+        next();
+    },
+    (req,res,next)=>{
+        console.log("ROute 3 called");
+        res.send("ROute 3!");
+    }
+)
 app.get("/te+st/:testId/:password",(req,res)=>{
     console.log(req.params);
     res.send("Testing successfully completed");
