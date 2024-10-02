@@ -99,9 +99,9 @@ app.post("/login",async(req,res)=>{
       throw new Error("USer not present");
      }
     
-     const isValidPassword= await bcrypt.compare(password,user.password)
+     const isValidPassword= await  user.validatePassword(password);
      if(isValidPassword){
-      const token=await jwt.sign({_id:user._id},"DEV@Tinder*",{expiresIn:"1d",});
+      const token=await user.getJWT();
       res.cookie("token",token,{expires:new Date(Date.now()+8*3600000)});
       res.send("Login successfully");
      }else{

@@ -36,11 +36,22 @@
 - never trust req.body
 
 -login and signup using jwt token
--1.LoginApi-create token by using bcrypt.compare();
--2.send the cookies
--SignUp
--1.request the cookie,verify the user by using bcrypt.verify
--userAuth middleware
--Set the expiry of jwt token and middleware
+SignUp-
+-1.Enter the info,including password
+-2.Hash the password using bcrypt.hash(password,rounds);
+-3.save user in database
 
+Login-
+-1.Take the email ans password,
+-2.See weather the user is present in database or not
+-3.compare the password entered by user and the hashed password stored in db
+-4.if the password is validated
+-5.create a token by passing id,privateKey and expire using jwt.sign({id:_id},"dndgnjng");
+-6.wrap that token inside cookies ans send cookies using res.cookies("token",token);
 
+Profile-
+-1.To see weather the logged in user is accessing the api
+-2.request the token from cookie
+-3.get the id from token by using jwt.verify(token,privateKey);
+-4.if the id is found in db then gives accesss to profile api
+-5.create separate auth function to check verify the user 

@@ -1,5 +1,8 @@
+const { JsonWebTokenError } = require("jsonwebtoken");
 const mongoose=require("mongoose");
 const validator=require("validator");
+const jwt=require("jsonwebtoken");
+const bcrypt=require("bcrypt");
 const UserModel=new mongoose.Schema({
     firstname:{
         type:String,
@@ -60,4 +63,19 @@ const UserModel=new mongoose.Schema({
     timestamps:true
 }
 );
+UserModel.methods.getJWT=async function(){
+  const user=this;
+  const token=await jwt.sign({_id:user.id},"devTinder@123",{
+    expiresIn:"7d",
+  });
+  return token;
+}
+
+UserModel.methods.validatePassword=async function(UserInputPassword){
+  const user=this;
+  const HashedPassword=user.password;
+  const validated=await bcrypt.compare(UserInputPassword,HashedPassword);
+  return validated;
+
+}
 module.exports=mongoose.model("User",UserModel);
