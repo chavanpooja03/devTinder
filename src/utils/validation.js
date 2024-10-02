@@ -11,4 +11,10 @@ const validateSignUp=(req)=>{
    }
 
 }
-module.exports={validateSignUp};
+
+const validateUserEditData=(req)=>{
+   const allowedEditData=["firstname","lastname","gender","age","email"];
+   const isvalid=Object.keys(req.body).every(key=>allowedEditData.includes(key));
+   return isvalid;
+}
+module.exports={validateSignUp,validateUserEditData};
