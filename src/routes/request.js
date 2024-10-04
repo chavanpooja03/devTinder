@@ -3,7 +3,7 @@ const requestRouter=express.Router();
 const User=require("../models/user");
 const ConnectionRequest=require("../models/connection");
 const authUser=require("../middleware/auth");
-
+const USER_SAFE_DATA="firstname lastname ";
 requestRouter.post("/request/send/:status/:toUserId",authUser,async(req,res)=>{
     try{
       const fromUserId=req.user._id;
@@ -48,5 +48,31 @@ requestRouter.post("/request/send/:status/:toUserId",authUser,async(req,res)=>{
         res.status(400).send("Error occured,something went wrong"+err);
     }
 });
+
+requestRouter.post("/request/review/:status/:requestId",authUser,async(req,res)=>{
+     try{
+        const loggedInUser=req.user;
+        const {status,requestId}=req.params;
+        const allowedStatus=["accepted","rejected"];
+        if(!allowedStatus.includes(status)){
+          return res.status(400).json({message:"Status is not valid"});
+        }
+        const connectionReview=await ConnectionRequest.findOne({
+          _id:requestId,
+          toUserId:loggedInUser._id,
+          status:"interested",
+        });
+        if(!connectionReview){
+         return res.status(400).json({message:"Connection request not found"})
+        }
+        connectionReview.status=status;
+        const data=await connectionReview.save();
+        res.json({message:"Connection requesr"+status,data});
+     }catch(err){
+      res.status(400).send("SOmething went wrong"+err);
+     }
+});
+
+
 
 module.exports=requestRouter;
